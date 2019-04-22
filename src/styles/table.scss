@@ -1,0 +1,27 @@
+.table-filter {
+    display: flex;
+
+    dl {
+        // width: 250px;
+        max-width: 250px;
+        margin-right: 20px;
+
+        dt,
+        dd {
+            padding: 0;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        dt {
+            margin-bottom: 8px;
+        }
+    }
+}
+
+.table-page {
+    height: 52px;
+    box-sizing: border-box;
+    padding: 10px 0;
+    text-align: center
+}
