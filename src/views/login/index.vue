@@ -55,7 +55,7 @@ export default {
     }
     return {
       loginForm: {
-        codeId: '123456',
+        codeId: '00000001',
         password: '123456'
       },
       loginRules: {

@@ -37,3 +37,11 @@ export function getUserInfo() {
     method: 'get'
   })
 }
+
+export function getUserList(data) {
+  return request({
+    url: '/api/users/getUserList',
+    method: 'post',
+    data
+  })
+}
