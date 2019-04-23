@@ -22,3 +22,12 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function signIn() {
+  return request({
+    url: '/user/login',
+    method: 'post',
+    data
+  })
+}
+

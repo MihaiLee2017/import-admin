@@ -2,6 +2,9 @@
   <app-main>
     <section slot="app-header">
       <upload-excel @on-selected-file="selected" @submit="_submit" />
+      <div class="errMsg" v-show="isError">
+        提示：以下数据数据导入失败
+      </div>
     </section>
     <section style="height:100%">
       <el-table :data="tablePageData" stripe border style="width: 100%" height="100%">
@@ -31,6 +34,7 @@
 <script>
 import AppMain from '@/components/AppMain'
 import UploadExcel from '@/components/UploadExcel'
+import { importUser } from '@/api/userAction'
 export default {
   name: 'UserImport',
   components: {
@@ -40,8 +44,15 @@ export default {
   data() {
     return {
       // files: [],
+      isError: '',
       tableData: [],
       tableHeader: [],
+      keys: {
+        姓名: 'username',
+        密码: 'password',
+        邮箱: 'email',
+        学号: 'codeId'
+      },
       pageObj: {
         page: 1,
         size: 20,
@@ -78,10 +89,53 @@ export default {
       let s = (page - 1) * size + scope.$index
       this.tableData.splice(s, 1)
     },
-    _submit() {}
+    _submit() {
+      let list = this.tableData.map(data => {
+        let obj = {}
+        this.tableHeader.forEach(header => {
+          obj[this.keys[header]] = data[header]
+        })
+        return obj
+      })
+      const params = {
+        list
+      }
+      importUser(params).then(res => {
+        let { data } = res
+        if (data.errResult) {
+          let codeIds = []
+          data.errResult.writeErrors.forEach(item => {
+            codeIds.push(item.op[this.keys['学号']])
+          })
+          this.isError = true
+          this.tableData = this.tableData.filter(item => {
+            let id = '' + item['学号']
+            return codeIds.indexOf(id) > -1
+          })
+          this.$message({
+            message: res.message,
+            type: 'error'
+          })
+          this.pageObj = {
+            page: 1,
+            size: 20,
+            total: this.tableData.length
+          }
+          return false
+        }
+        this.$message('导入成功')
+        this.tableData = []
+        this.isError = false
+      })
+    }
   }
 }
 </script>
 <style lang="scss">
 @import '~@/styles/table.scss';
+.errMsg {
+  color: red;
+  line-height: 32px;
+  font-size: 16px;
+}
 </style>
