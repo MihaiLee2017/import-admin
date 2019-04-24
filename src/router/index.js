@@ -139,7 +139,7 @@ export const asyncRouterMap = [
     path: '/role',
     component: Layout,
     redirect: '/role/role-manage',
-    meta: { title: '角色管理', icon: 'link', roles: ["2"] },
+    meta: { title: '角色管理', icon: 'link', roles: ["1"] },
     children: [
       {
         path: 'role-manage',

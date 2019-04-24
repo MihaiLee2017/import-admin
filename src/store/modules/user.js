@@ -1,11 +1,13 @@
 // import { login, logout, getInfo } from '@/api/user'
-import { resetRouter, adminRoutes } from '@/router'
+// import { resetRouter, adminRoutes } from '@/router'
 import { signIn, getUserInfo, exit } from '@/api/userAction'
+import { getRoleList } from '@/api/rolesAction'
 const state = {
   name: '',
   avatar: '',
   userInfo: {},
   roles: [],
+  roleList: []
 }
 
 const mutations = {
@@ -14,6 +16,9 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  SET_ROLES_LIST: (state, roleList) => {
+    state.roleList = roleList
   }
 }
 
@@ -54,12 +59,23 @@ const actions = {
         commit("SET_ROLES", [roles])
         // dispatch('GenerateRoutes', { roles: state.roles }, { root: true })
         // router.addRoutes(rootState.permission.addRouters)
-        resetRouter()
+        // resetRouter()
         resolve(data.user)
       }).catch(error => {
         reject({})
       })
     })
+  },
+  getRoleList({ commit }) {
+    // return new Promise((resolve, reject) => {
+    getRoleList().then(res => {
+      let { data: { roleList } } = res
+      commit("SET_ROLES_LIST", roleList)
+      // resolve(res)
+    }).catch(err => {
+      // reject()
+    })
+    // })
   }
 }
 
