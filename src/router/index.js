@@ -26,11 +26,11 @@ import Layout from '@/layout'
  */
 
 /**
- * constantRoutes
+ * constantRouterMap
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [
+export const constantRouterMap = [
   {
     path: '/login',
     component: () => import('@/views/login/index'),
@@ -55,7 +55,43 @@ export const constantRoutes = [
     }]
   },
   {
+    path: 'external-link',
+    component: Layout,
+    children: [
+      {
+        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
+        meta: { title: 'External Link', icon: 'link' }
+      }
+    ],
+  },
+  // { path: '*', redirect: '/404', hidden: true }
+  // 404 page must be placed at the end !!!
+  // { path: '*', redirect: '/404', hidden: true }
+]
+
+export const adminRoutes = [
+  {
     path: '/admin',
+    component: Layout,
+    redirect: '/admin/user-manage',
+    meta: { title: '用户管理', icon: 'link' },
+    children: [
+      {
+        path: 'user-manage',
+        name: 'UserManage',
+        component: () => import('@/views/admin/user-manage'),
+        meta: { title: '用户信息', icon: 'link' }
+      },
+      {
+        path: 'user-import',
+        name: 'UserImport',
+        component: () => import('@/views/admin/user-import'),
+        meta: { title: '用户导入', icon: 'link' }
+      }
+    ]
+  },
+  {
+    path: '/role',
     component: Layout,
     redirect: '/admin/user-manage',
     meta: { title: '用户管理', icon: 'link' },
@@ -73,26 +109,52 @@ export const constantRoutes = [
         meta: { title: '用户导入', icon: 'link' }
       },
     ]
-  },
+  }
+]
+export const normalRoutes = [
+
+]
+export const asyncRouterMap = [
   {
-    path: 'external-link',
+    path: '/admin',
     component: Layout,
+    redirect: '/admin/user-manage',
+    meta: { title: '用户管理', icon: 'link', roles: ["1"] },
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
-      }
+        path: 'user-manage',
+        name: 'UserManage',
+        component: () => import('@/views/admin/user-manage'),
+        meta: { title: '用户信息', icon: 'link' }
+      },
+      {
+        path: 'user-import',
+        name: 'UserImport',
+        component: () => import('@/views/admin/user-import'),
+        meta: { title: '用户导入', icon: 'link' }
+      },
     ]
   },
-
-  // 404 page must be placed at the end !!!
+  {
+    path: '/role',
+    component: Layout,
+    redirect: '/role/role-manage',
+    meta: { title: '角色管理', icon: 'link', roles: ["2"] },
+    children: [
+      {
+        path: 'role-manage',
+        name: 'RoleManage',
+        component: () => import('@/views/role/role-manage'),
+        meta: { title: '角色信息', icon: 'link' }
+      }]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: constantRouterMap
 })
 
 const router = createRouter()

@@ -97,14 +97,24 @@ export default {
           this.$store
             .dispatch('user/signIn', this.loginForm)
             .then(() => {
-              this.$router.push({ path: this.redirect || '/' })
+              const permission_routers = this.$store.getters.permission_routers
+              let path = '/'
+              // console.log(this.redirect, permission_routers)
+              // if (this.redirect) {
+              //   const isHas = permission_routers.some(item => {
+              //     return this.redirect.indexOf(item.path)
+              //   })
+              //   if (isHas) {
+              //     path = this.redirect
+              //   }
+              // }
+              this.$router.push(path)
               this.loading = false
             })
             .catch(() => {
               this.loading = false
             })
         } else {
-          console.log('error submit!!')
           return false
         }
       })
