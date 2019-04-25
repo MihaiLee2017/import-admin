@@ -31,7 +31,7 @@
     </section>
     <!-- <section> -->
     <el-table :data="tablePageData" stripe border style="width: 100%" height="100%" v-loading="loading">
-      <el-table-column v-for="(item,index) in tableHeader" :prop="item.value" :label="item.lable" :key="index">
+      <el-table-column v-for="(item,index) in tableHeader" :prop="item.value" :label="item.label" :key="index">
         <template slot-scope="scope">
           <span v-if="item.value=='roleId'">{{scope.row.roleId.role}}</span>
           <span v-else>{{scope.row[item.value]}}</span>
@@ -46,7 +46,7 @@
     <!-- </section> -->
     <section slot="app-footer" v-if="tablePageData.length>0">
       <div class="table-page">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageObj.page" :page-sizes="[20, 30, 40, 50]" :page-size="pageObj.size" layout="total, sizes, prev, pager, next, jumper" :total="pageObj.total">
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageObj.page" :page-sizes="pageSizes" :page-size="pageObj.size" layout="total, sizes, prev, pager, next, jumper" :total="pageObj.total">
         </el-pagination>
       </div>
     </section>
@@ -56,8 +56,10 @@
 import AppMain from '@/components/AppMain'
 import { mapGetters, mapActions } from 'vuex'
 import { getUserList, delUser } from '@/api/userAction'
+import { tablePage } from '@/mixins/table'
 export default {
   name: 'UserManage',
+  mixins: [tablePage],
   components: {
     AppMain
   },
@@ -68,17 +70,17 @@ export default {
       username: '',
       codeId: '',
       tableHeader: [
-        { lable: '姓名', value: 'username' },
-        { lable: '邮箱', value: 'email' },
-        { lable: '学号', value: 'codeId' },
-        { lable: '角色', value: 'roleId' }
+        { label: '姓名', value: 'username' },
+        { label: '邮箱', value: 'email' },
+        { label: '学号', value: 'codeId' },
+        { label: '角色', value: 'roleId' }
       ],
-      tablePageData: [],
-      pageObj: {
-        page: 1,
-        size: 20,
-        total: 0
-      }
+      tablePageData: []
+      // pageObj: {
+      //   page: 1,
+      //   size: 20,
+      //   total: 0
+      // }
     }
   },
   computed: {
@@ -116,20 +118,21 @@ export default {
         .then(res => {
           const { data: { result } } = res
           this.tablePageData = result
+          this.pageObj.total = this.tablePageData.length
           // console.log(this.tablePageData)
         })
         .finally(res => {
           this.loading = false
         })
     },
-    handleSizeChange(value) {
-      this.pageObj.size = value
-      this._getUserList()
-    },
-    handleCurrentChange(value) {
-      this.pageObj.page = value
-      this._getUserList()
-    },
+    // handleSizeChange(value) {
+    //   this.pageObj.size = value
+    //   this._getUserList()
+    // },
+    // handleCurrentChange(value) {
+    //   this.pageObj.page = value
+    //   this._getUserList()
+    // },
     async _delColumn(scope) {
       const params = {
         _id: scope.row._id

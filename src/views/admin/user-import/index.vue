@@ -27,12 +27,6 @@
             <el-button @click="_delColumn(scope)" type="text" size="small">删除</el-button>
           </template>
         </el-table-column>
-        <!-- <el-table-column prop="date" label="日期" width="180">
-        </el-table-column>
-        <el-table-column prop="name" label="姓名" width="180">
-        </el-table-column>
-        <el-table-column prop="address" label="地址">
-        </el-table-column> -->
       </el-table>
     </section>
     <section slot="app-footer" v-if="tablePageData.length>0">
