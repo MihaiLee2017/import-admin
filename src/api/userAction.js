@@ -45,3 +45,10 @@ export function getUserList(data) {
     data
   })
 }
+export function delUser(data) {
+  return request({
+    url: '/api/users/delUser',
+    method: 'post',
+    data
+  })
+}

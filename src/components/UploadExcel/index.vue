@@ -1,6 +1,7 @@
 <template>
   <section>
     <section class="table-filter">
+      <slot name="filter"></slot>
       <dl class="input-group">
         <dt>选择文件：</dt>
         <dd>

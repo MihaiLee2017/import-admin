@@ -29,17 +29,21 @@
         </dd>
       </dl>
     </section>
-    <section>
-      <el-table :data="tablePageData" stripe border style="width: 100%" height="100%">
-        <el-table-column v-for="(item,index) in tableHeader" :prop="item" :label="item" :key="index">
-        </el-table-column>
-        <el-table-column fixed="right" label="操作" width="100" v-if="tablePageData.length">
-          <template slot-scope="scope">
-            <!-- <el-button @click="_delColumn(scope)" type="text" size="small">删除</el-button> -->
-          </template>
-        </el-table-column>
-      </el-table>
-    </section>
+    <!-- <section> -->
+    <el-table :data="tablePageData" stripe border style="width: 100%" height="100%" v-loading="loading">
+      <el-table-column v-for="(item,index) in tableHeader" :prop="item.value" :label="item.lable" :key="index">
+        <template slot-scope="scope">
+          <span v-if="item.value=='roleId'">{{scope.row.roleId.role}}</span>
+          <span v-else>{{scope.row[item.value]}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column fixed="right" label="操作" width="100" v-if="tablePageData.length">
+        <template slot-scope="scope">
+          <el-button @click="_delColumn(scope)" type="text" size="small">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- </section> -->
     <section slot="app-footer" v-if="tablePageData.length>0">
       <div class="table-page">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageObj.page" :page-sizes="[20, 30, 40, 50]" :page-size="pageObj.size" layout="total, sizes, prev, pager, next, jumper" :total="pageObj.total">
@@ -51,7 +55,7 @@
 <script>
 import AppMain from '@/components/AppMain'
 import { mapGetters, mapActions } from 'vuex'
-import { getUserList } from '@/api/userAction'
+import { getUserList, delUser } from '@/api/userAction'
 export default {
   name: 'UserManage',
   components: {
@@ -59,10 +63,16 @@ export default {
   },
   data() {
     return {
+      loading: false,
       roleId: '',
       username: '',
       codeId: '',
-      tableHeader: ['username', 'email', 'codeId', 'roleId'],
+      tableHeader: [
+        { lable: '姓名', value: 'username' },
+        { lable: '邮箱', value: 'email' },
+        { lable: '学号', value: 'codeId' },
+        { lable: '角色', value: 'roleId' }
+      ],
       tablePageData: [],
       pageObj: {
         page: 1,
@@ -93,6 +103,7 @@ export default {
   methods: {
     ...mapActions('user', ['getRoleList']),
     _getUserList() {
+      if (this.loading) return false
       const params = {
         roleId: this.roleId,
         username: this.username,
@@ -100,13 +111,32 @@ export default {
         page: this.pageObj.page,
         size: this.pageObj.size
       }
-      getUserList(params).then(res => {})
+      this.loading = true
+      getUserList(params)
+        .then(res => {
+          const { data: { result } } = res
+          this.tablePageData = result
+          // console.log(this.tablePageData)
+        })
+        .finally(res => {
+          this.loading = false
+        })
     },
     handleSizeChange(value) {
       this.pageObj.size = value
+      this._getUserList()
     },
     handleCurrentChange(value) {
       this.pageObj.page = value
+      this._getUserList()
+    },
+    async _delColumn(scope) {
+      const params = {
+        _id: scope.row._id
+      }
+      await delUser(params).then(res => {
+        this.handleCurrentChange(1)
+      })
     }
   }
 }
